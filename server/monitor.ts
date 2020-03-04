@@ -7,9 +7,9 @@
  * @license MIT
  */
 
-import {exec, ExecException, ExecOptions} from 'child_process';
-import {crashlogger} from "../lib/crashlogger";
-import {FS} from "../lib/fs";
+import { exec, ExecException, ExecOptions } from 'child_process';
+import { crashlogger } from "../lib/crashlogger";
+import { FS } from "../lib/fs";
 
 const MONITOR_CLEAN_TIMEOUT = 2 * 60 * 60 * 1000;
 
@@ -47,7 +47,7 @@ export class TimedCounter extends Map<string, [number, number]> {
 // (4 is currently unused)
 // 5 = supposedly completely silent, but for now a lot of PS output doesn't respect loglevel
 if (('Config' in global) &&
-		(typeof Config.loglevel !== 'number' || Config.loglevel < 0 || Config.loglevel > 5)) {
+	(typeof Config.loglevel !== 'number' || Config.loglevel < 0 || Config.loglevel > 5)) {
 	Config.loglevel = 2;
 }
 
@@ -59,10 +59,10 @@ export const Monitor = new class {
 	tickets = new TimedCounter();
 
 	activeIp: string | null = null;
-	networkUse: {[k: string]: number} = {};
-	networkCount: {[k: string]: number} = {};
-	hotpatchLock: {[k: string]: {by: string, reason: string}} = {};
-	hotpatchVersions: {[k: string]: string | undefined} = {};
+	networkUse: { [k: string]: number } = {};
+	networkCount: { [k: string]: number } = {};
+	hotpatchLock: { [k: string]: { by: string, reason: string } } = {};
+	hotpatchVersions: { [k: string]: string | undefined } = {};
 
 	TimedCounter = TimedCounter;
 
@@ -79,7 +79,7 @@ export const Monitor = new class {
 				const nlIndex = stack.indexOf('\n');
 				[error.name, error.message, source, details] = JSON.parse(stack.slice(4, nlIndex));
 				error.stack = stack.slice(nlIndex + 1);
-			} catch (e) {}
+			} catch (e) { }
 		}
 		const crashType = crashlogger(error, source, details);
 		Rooms.global.reportCrash(error, source);
@@ -141,21 +141,21 @@ export const Monitor = new class {
 	 * Counts a connection. Returns true if the connection should be terminated for abuse.
 	 */
 	countConnection(ip: string, name = '') {
-		const [count, duration] = this.connections.increment(ip, 30 * 60 * 1000);
-		if (count === 500) {
-			this.adminlog(`[ResourceMonitor] IP ${ip} banned for cflooding (${count} times in ${Chat.toDurationString(duration)}${name ? ': ' + name : ''})`);
-			return true;
-		}
+		// const [count, duration] = this.connections.increment(ip, 30 * 60 * 1000);
+		// if (count === 500) {
+		// 	this.adminlog(`[ResourceMonitor] IP ${ip} banned for cflooding (${count} times in ${Chat.toDurationString(duration)}${name ? ': ' + name : ''})`);
+		// 	return true;
+		// }
 
-		if (count > 500) {
-			if (count % 500 === 0) {
-				const c = count / 500;
-				if (c === 2 || c === 4 || c === 10 || c === 20 || c % 40 === 0) {
-					this.adminlog(`[ResourceMonitor] IP ${ip} still cflooding (${count} times in ${Chat.toDurationString(duration)}${name ? ': ' + name : ''})`);
-				}
-			}
-			return true;
-		}
+		// if (count > 500) {
+		// 	if (count % 500 === 0) {
+		// 		const c = count / 500;
+		// 		if (c === 2 || c === 4 || c === 10 || c === 20 || c % 40 === 0) {
+		// 			this.adminlog(`[ResourceMonitor] IP ${ip} still cflooding (${count} times in ${Chat.toDurationString(duration)}${name ? ': ' + name : ''})`);
+		// 		}
+		// 	}
+		// 	return true;
+		// }
 
 		return false;
 	}
@@ -165,16 +165,16 @@ export const Monitor = new class {
 	 * terminated for abuse.
 	 */
 	countBattle(ip: string, name = '') {
-		const [count, duration] = this.battles.increment(ip, 30 * 60 * 1000);
-		if (duration < 5 * 60 * 1000 && count % 30 === 0) {
-			this.adminlog(`[ResourceMonitor] IP ${ip} has battled ${count} times in the last ${Chat.toDurationString(duration)}${name ? ': ' + name : ''})`);
-			return true;
-		}
+		// const [count, duration] = this.battles.increment(ip, 30 * 60 * 1000);
+		// if (duration < 5 * 60 * 1000 && count % 30 === 0) {
+		// 	this.adminlog(`[ResourceMonitor] IP ${ip} has battled ${count} times in the last ${Chat.toDurationString(duration)}${name ? ': ' + name : ''})`);
+		// 	return true;
+		// }
 
-		if (count % 150 === 0) {
-			this.adminlog(`[ResourceMonitor] IP ${ip} has battled ${count} times in the last ${Chat.toDurationString(duration)}${name ? ': ' + name : ''}`);
-			return true;
-		}
+		// if (count % 150 === 0) {
+		// 	this.adminlog(`[ResourceMonitor] IP ${ip} has battled ${count} times in the last ${Chat.toDurationString(duration)}${name ? ': ' + name : ''}`);
+		// 	return true;
+		// }
 
 		return false;
 	}
@@ -183,20 +183,24 @@ export const Monitor = new class {
 	 * Counts team validations. Returns true if too many.
 	 */
 	countPrepBattle(ip: string, connection: Connection) {
-		const count = this.battlePreps.increment(ip, 3 * 60 * 1000)[0];
-		if (count <= 12) return false;
-		if (count < 120 && Punishments.sharedIps.has(ip)) return false;
-		connection.popup('Due to high load, you are limited to 12 battles and team validations every 3 minutes.');
-		return true;
+		// const count = this.battlePreps.increment(ip, 3 * 60 * 1000)[0];
+		// if (count <= 12) return false;
+		// if (count < 120 && Punishments.sharedIps.has(ip)) return false;
+		// connection.popup('Due to high load, you are limited to 12 battles and team validations every 3 minutes.');
+		// return true;
+
+		return false;
 	}
 
 	/**
 	 * Counts concurrent battles. Returns true if too many.
 	 */
 	countConcurrentBattle(count: number, connection: Connection) {
-		if (count <= 5) return false;
-		connection.popup(`Due to high load, you are limited to 5 games at the same time.`);
-		return true;
+		// if (count <= 5) return false;
+		// connection.popup(`Due to high load, you are limited to 5 games at the same time.`);
+		// return true;
+
+		return false;
 	}
 	/**
 	 * Counts group chat creation. Returns true if too much.
@@ -210,12 +214,13 @@ export const Monitor = new class {
 	 * Counts ticket creation. Returns true if too much.
 	 */
 	countTickets(ip: string) {
-		const count = this.tickets.increment(ip, 60 * 60 * 1000)[0];
-		if (Punishments.sharedIps.has(ip)) {
-			return count >= 20;
-		} else {
-			return count >= 5;
-		}
+		// const count = this.tickets.increment(ip, 60 * 60 * 1000)[0];
+		// if (Punishments.sharedIps.has(ip)) {
+		// 	return count >= 20;
+		// } else {
+		// 	return count >= 5;
+		// }
+		return false
 	}
 
 	/**
@@ -259,23 +264,23 @@ export const Monitor = new class {
 		while (stack.length) {
 			const value = stack.pop();
 			switch (typeof value) {
-			case 'boolean':
-				bytes += 4;
-				break;
-			case 'string':
-				bytes += value.length * 2;
-				break;
-			case 'number':
-				bytes += 8;
-				break;
-			case 'object':
-				if (!objectCache.has(value)) objectCache.add(value);
-				if (Array.isArray(value)) {
-					for (const el of value) stack.push(el);
-				} else {
-					for (const i in value) stack.push(value[i]);
-				}
-				break;
+				case 'boolean':
+					bytes += 4;
+					break;
+				case 'string':
+					bytes += value.length * 2;
+					break;
+				case 'number':
+					bytes += 8;
+					break;
+				case 'object':
+					if (!objectCache.has(value)) objectCache.add(value);
+					if (Array.isArray(value)) {
+						for (const el of value) stack.push(el);
+					} else {
+						for (const i in value) stack.push(value[i]);
+					}
+					break;
 			}
 		}
 
@@ -309,7 +314,7 @@ export const Monitor = new class {
 
 			await this.sh(`git reset`, options);
 			await index.unlinkIfExists();
-		} catch (err) {}
+		} catch (err) { }
 		return hash;
 	}
 };
