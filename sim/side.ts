@@ -368,6 +368,18 @@ export class Side {
 				targetType = move.target || 'normal';
 				break;
 			}
+			// If the id is a valid max move, select the first valid one, and pretend the regular move was chosen
+			// Existing logic will handle the rest
+			const maxMoves = pokemon.getMoveRequestData().maxMoves;
+			if ((megaDynaOrZ === '' || megaDynaOrZ === 'dynamax') && maxMoves?.maxMoves) {
+				for (let i = 0; i < maxMoves.maxMoves.length; i++) {
+					if (moveid === maxMoves.maxMoves[i].move) {
+						moveid = requestMoves[i].id;
+						targetType = requestMoves[i].target!;
+						megaDynaOrZ = 'dynamax';
+					}
+				}
+			}
 			if (!targetType) {
 				return this.emitChoiceError(`Can't move: Your ${pokemon.name} doesn't have a move matching ${moveid}`);
 			}
